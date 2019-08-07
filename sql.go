@@ -2,26 +2,49 @@
 * @Author: scottxiong
 * @Date:   2019-08-02 16:46:32
 * @Last Modified by:   scottxiong
-* @Last Modified time: 2019-08-03 10:08:07
+* @Last Modified time: 2019-08-07 11:43:08
  */
 package main
 
 import (
+	"flag"
 	"fmt"
+	"github.com/scott-x/gutils/fs"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-const domain = "https://micky.life"
+const (
+	domain           = "https://micky.life"
+	templates_folder = "/Users/apple/go/src/github.com/scott-x/templates/sql"
+)
+
+var local, remote bool
 
 func main() {
-	source := []string{"temp.sql", "example/user1.sql", "example/user2.sql", "example/blog1.sql", "example/blog2.sql"}
-	createDirIfNotExist("example")
-	for _, s := range source {
-		getContents(s, "./"+s)
+	flag.BoolVar(&local, "l", false, "get the templates via local")
+	flag.BoolVar(&remote, "r", false, "get the templates via remote server")
+	flag.Parse()
+	switch len(os.Args) {
+	case 1:
+		flag.PrintDefaults()
+	case 2:
+		if os.Args[1] != "-l" && os.Args[1] != "-r" {
+			flag.PrintDefaults()
+		}
+		switch os.Args[1] {
+		case "-l":
+			fs.CopyFolder(templates_folder, "./")
+		case "-r":
+			source := []string{"temp.sql", "example/user1.sql", "example/user2.sql", "example/blog1.sql", "example/blog2.sql"}
+			createDirIfNotExist("example")
+			for _, s := range source {
+				getContents(s, "./"+s)
+			}
+			fmt.Println("import data: mysql [-h host] -uuser -p > xxx.sql")
+		}
 	}
-	fmt.Println("import data: mysql [-h host] -uuser -p > xxx.sql")
 
 }
 
