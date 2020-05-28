@@ -17,8 +17,9 @@ import (
 
 const (
 	domain           = "https://micky.life"
-	templates_folder = "/Users/apple/go/src/github.com/scott-x/templates/sql"
 )
+
+var templates_folder = fs.HOME+"/go/src/github.com/scott-x/templates/sql"
 
 var local, remote bool
 
